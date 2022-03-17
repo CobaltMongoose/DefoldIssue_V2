@@ -39,6 +39,7 @@ function update(self, dt)
 	--self.velocity = vmath.vector3(0,0,0)
 
 	--trying dampening instead of hard reseting velocity to zero
+
 	if vmath.length(self.velocity) > 0.0005 then
 		self.velocity = self.velocity * 0.5 --vmath.vector3(0.5,0.5,0.5)
 	else
