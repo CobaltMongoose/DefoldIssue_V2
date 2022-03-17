@@ -1,0 +1,21 @@
+[bootstrap]
+main_collection = /main/main.collectionc
+render = /rendercam/rendercam.renderc
+
+[script]
+shared_state = 1
+
+[display]
+width = 1024
+height = 576
+
+[android]
+input_method = HiddenInputField
+
+[project]
+title = TestInputBug
+dependencies#0 = https://github.com/rgrams/rendercam/archive/1.0.3.zip
+
+[input]
+repeat_interval = 0.0
+

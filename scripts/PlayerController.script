@@ -1,0 +1,77 @@
+--velocity property
+go.property("velocity", vmath.vector3(0,0,0))
+
+go.property("Gun", msg.url())
+go.property("FireRateInMS", 333)
+go.property("ProjColor", vmath.vector4(1, 1, 1, 1))
+go.property("ProjSpeed", vmath.vector3(0, 0, 0))
+
+-- Declare Local Variables
+
+local fireTimer = 0
+
+function init(self)
+	-- Acquire Input Focus for the entier game object.
+	msg.post(".", "acquire_input_focus")
+	fireTimer = 0
+end
+
+function update(self, dt)
+	fireTimer = fireTimer + dt
+	if fireTimer > 1000 then
+		fireTimer = 999
+	end
+	
+	-- Update the arrowMove Character's Postion based on velocity and time since last update 
+	self.velocity.x = self.velocity.x * dt
+	self.velocity.y = self.velocity.y * dt
+	self.velocity.z = self.velocity.z * dt
+	local current_position = go.get_position(".")
+	current_position = current_position + self.velocity
+	go.set_position(current_position)
+
+	
+	--self.velocity.x = 0
+	--self.velocity.y = 0
+
+	--for some reason this results in a bullet that will not take a velocity in the right or +x direction.
+	--comment out this line and the projectile will take on the right or +x velocity.
+	--self.velocity = vmath.vector3(0,0,0)
+
+	--trying dampening instead of hard reseting velocity to zero
+	if vmath.length(self.velocity) > 0.0005 then
+		self.velocity = self.velocity * 0.5 --vmath.vector3(0.5,0.5,0.5)
+	else
+		self.velocity.x = 0
+		self.velocity.y = 0
+	end
+
+	
+end
+
+function on_input(self, action_id, action)
+	if action_id == hash("up") then
+		self.velocity.y = 150
+	end
+	if action_id == hash("down") then
+		self.velocity.y = -150
+	end
+	if action_id == hash("left") then
+		self.velocity.x = -150
+	end
+	if action_id == hash("right") then
+		self.velocity.x = 150
+	end
+
+	pprint(self.velocity.x, self.velocity.y)
+	if action_id == hash("shoot") then
+		if fireTimer > self.FireRateInMS / 1000 then
+			fireTimer = 0
+			local bullet_pos = go.get_position(".")
+			bullet_pos.z = bullet_pos.z - 0.1
+			local bullet_rot = go.get_rotation(".")
+			local bullet_vel = self.velocity
+			factory.create(self.Gun, bullet_pos, nil, {color = self.ProjColor, BulletVelocity = bullet_vel})
+		end
+	end
+end
